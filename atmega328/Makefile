@@ -1,15 +1,19 @@
 
 
 
-SOURCES=./src/diyservo.c
+#SOURCES=./src/diyservo.c
 
-//SOURCES=./src/pulse.c
+#SOURCES=./src/examples/pulse.c
+
+PROJECT=hbridge_pulse
+
+SOURCES=./src/examples/$(PROJECT).c
+
 
 
 
 
 ###################################
-PROJECT=blink
 CC=avr-g++
 OBJCOPY=avr-objcopy
 MMCU=atmega328p

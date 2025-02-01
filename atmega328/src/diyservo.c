@@ -72,6 +72,18 @@ uint8_t enc_a = 0;
 uint8_t enc_b = 0;
 
 
+/*
+
+#define BRIDGE_DIR_A_PORT PORTD
+#define BRIDGE_DIR_A_PIN 4
+
+#define BRIDGE_DIR_B_PORT PORTD
+#define BRIDGE_DIR_B_PIN 5
+
+#define MOTOR_ENABLE_PORT PORTD
+#define MOTOR_ENABLE_PIN 6
+
+*/
 
 
 
