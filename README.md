@@ -1,5 +1,5 @@
 # servokit
-tools to accelarate prototyping low voltage servos:
+tools to accelerate prototyping low voltage servos:
 
 
 
@@ -9,8 +9,8 @@ tools to accelarate prototyping low voltage servos:
 - 5-20 volts (and beyond) 
 
 
-simple Hbridge setup 
-simple servo setup 
-simple servo driver setup 
- 
+- simple Hbridge setup 
+- simple servo setup 
+- simple servo driver setup 
+
 

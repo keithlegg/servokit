@@ -1,11 +1,8 @@
 
 
 
-#SOURCES=./src/diyservo.c
 
-#SOURCES=./src/examples/pulse.c
-
-PROJECT=hbridge_pulse
+PROJECT=pwm_servo
 
 SOURCES=./src/examples/$(PROJECT).c
 
