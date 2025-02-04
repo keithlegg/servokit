@@ -1,12 +1,11 @@
 #include <avr/io.h>
-
-#define F_CPU 16000000UL // AVR Clock Speed in MHZ
-#define FOSC 16000000    // Clock Speed
-
 #include <util/delay.h>
 #include <avr/interrupt.h>
 #include <stdlib.h>
 
+
+#define F_CPU 16000000UL // AVR Clock Speed in MHZ
+#define FOSC 16000000    // Clock Speed
 
 #define PWM_PRESCALLER 64
 #define ICR_MAX (long double)F_CPU/PWM_PRESCALLER/50
@@ -14,51 +13,54 @@
 #define OCR_MAX ICR_MAX/10
 
 
-volatile unsigned long adc_val=0;
-volatile unsigned long counter=0;
-unsigned long curr_adc=0;
-
-
 
 /*
 
-  outputs on pin PB1 /"pin 9" on arduino 
-  runs on 16mhz atmega328p running full speed with external xtal 
+    
+    THE ONLY WAY TO KNOW WHATS REALLY GOING ON IS TO LOOK AT THE PWM ON A SCOPE
+    NOT ALL SERVOS USE THE EXACT SAME TIMING SIGNALS 
+    THE UP/DOWN NEEDS TO BE ADJUSTED TO MATCH YOUR SERVO 
+    IT IS NOT JUST 0-1024, THAT IS JUST A FULL RANGE TO MAKE THE SERVO MOVE 
+    YOU ALSO NEED TO ALLOW TIME FOR THE SERVO TO KEEP UP BETWEEN SENDING IT A SIGNAL 
+    
 
-  ------
+    outputs on pin PB1 /"pin 9" on arduino 
+    runs on 16mhz atmega328p running full speed with external xtal 
 
-
-  ------
-  SERVO PWM 
-
-
-  20MS Period is 50Hz 
-
-  Center pos = 1500us - 1.5 MS
-  +90        = 2000us - 2   MS 
-  -90        = 1000us - 1   MS 
+    ------
 
 
-  // description of servo PWM - may or may not be what this code is doing. 
-
-  timer1 (16 bit) set to "fast pwm" mode with top=ICR1
-  set ICR1 to 20000
-  timer's triggering clock is 1MHZ = 8MHZ/8
-
-  this way you get frequency of 50 hz  
-  and the ocr is set to exactly what you want the high pulse to be
-  to center the servo
-
-  OCR1=1500;
+    ------
+    SERVO PWM 
 
 
-  // WIRING RELATED 
-  // the signal will be output on PB5/OC1A
-  // COLORS 
+    20MS Period is 50Hz 
 
-  Black or Brown is for ground.
-  Red is for power (~4.8-6V).
-  Yellow, Orange, or White is the signal wire (3-5V).
+    Center pos = 1500us - 1.5 MS
+    +90        = 2000us - 2   MS 
+    -90        = 1000us - 1   MS 
+
+
+    // description of servo PWM - may or may not be what this code is doing. 
+
+    timer1 (16 bit) set to "fast pwm" mode with top=ICR1
+    set ICR1 to 20000
+    timer's triggering clock is 1MHZ = 8MHZ/8
+
+    this way you get frequency of 50 hz  
+    and the ocr is set to exactly what you want the high pulse to be
+    to center the servo
+
+    OCR1=1500;
+
+
+    // WIRING RELATED 
+    // the signal will be output on PB5/OC1A
+    // COLORS 
+
+    Black or Brown is for ground.
+    Red is for power (~4.8-6V).
+    Yellow, Orange, or White is the signal wire (3-5V).
 
 */
 
