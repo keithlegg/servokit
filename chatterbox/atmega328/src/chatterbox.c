@@ -8,29 +8,24 @@
 
     ------------------------
     to send data: 
-
-    use 4 gcodes per frame 
-        4 bits in "parallel"
-
-        set 0
-        set 1
-        set 2
-        set 3 <- transistion triggers the transfer 
+    
+    data is 4 bits (HAL digital out) with the (spindle on, falling edge ) as a trigger to load the byte   
   
     ------------------------
     # HAL PINS
-    9  = digital 0
-    14 = digital 1
-    16 = digital 2
-    17 = digital 3 
+    8  = coolant mist (M7     /M9    )
+    9  = digital 0    (M64 Pn /M65 Pn)    
+    14 = digital 1    (M64 Pn /M65 Pn)
+    16 = digital 2    (M64 Pn /M65 Pn)
+    17 = digital 3    (M64 Pn /M65 Pn) 
     
     ------------------------
     # NANO PINS
     
-    0 = PD5 = (arduino D5)
-    1 = PD4 = (arduino D4)  
-    2 = PD3 = (arduino D3)
-    3 = PD2 = (arduino D2) (PC interrupt triggers the byte transfer)
+    0 = PD3 = (arduino )
+    1 = PD4 = (arduino )  
+    2 = PD5 = (arduino )
+    3 = PD6 = (arduino ) 
 
 */
 
@@ -187,19 +182,11 @@ void init_pins(void)
 {
 
     // setup pin change interrupts 
-    DDRD &= ~(1 << DDD2);              // Clear the PD2 pin
-    DDRD &= ~(1 << DDD3);              // Clear the PD3 pin
-    PORTD |= (1 << PD3)|(1 << PD2);    // turn on the pull-ups
+    DDRD &= ~(1 << DDD2);    // Clear the PD2 pin
+    //DDRD &= ~(1 << DDD3);  // Clear the PD3 pin
 
-    // setup H bridge control 
-    DDRD |= (1 << DDD4);               // set PD4 output for dir A 
-    DDRD |= (1 << DDD5);               // set PD5 output for dir B 
-    DDRD |= (1 << DDD6);               // set PD6 output for ENABLE / PWM 
+    DDRD |= 0xe;             // all but lower bit 
 
-    // disable all motor driver control lines 
-    cbi(PORTD, 4);  //bridge A    
-    cbi(PORTD, 5);  //bridge B
-    cbi(PORTD, 6);  //enable 
 
     // setup interrupts for reading two quadrature lines  
     // Interrupt 0 Sense Control
@@ -207,8 +194,9 @@ void init_pins(void)
     // Interrupt 1 Sense Control
     EICRA |= (1 << ISC11); // trigger on falling edge
     // External Interrupt Mask Register
+
     //EIMSK |= (1 << INT0)|(1 << INT1);   // Turns on INT0 and INT1
-    EIMSK |= (1 << INT0);   // Turns on INT0 
+    EIMSK |= (1 << INT0);                 // Turns on INT0 
 
     /*
     // setup PWM  
@@ -297,7 +285,10 @@ ISR (INT0_vect)
     //cnc_d0 = (PIND & (1 << PIND5)) == (1 << PIND5);
     
     //grab the lower 4 bits 
-    CNC_COMMAND = (PIND & 0x0f); 
+    //CNC_COMMAND = (PIND & 0x0f); 
+    
+    CNC_COMMAND = PIND>>3; 
+
     //grab the upper 4 bits 
     //CNC_COMMAND = (PIND & 0xf0) >> 4; 
 
