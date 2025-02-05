@@ -45,8 +45,12 @@ class protocol(object):
     
     def show_commands(self):
         for key, value in self.com.items():
-            print(key+" "+ '0x%s'%bytearray([value]).hex())
-      
+            if value<255:
+                print(key+" "+ '0x%s'%bytearray([value]).hex())
+            if value>=256 and value < 1023:
+                print(hex(((abs(x) ^ 0xffff) + 1) & 0xffff))
+
+
     def exists(self, name):
         if name in self.com:
             return self.com[name] 
@@ -81,7 +85,7 @@ class gen_gcode(object):
             print('command %s does not exist in protocol'%name)
 
 
-    def split_4bit(self, int_com):
+    def serialize_4bit(self, int_com):
         #serialize half bytes of data into G-code 
         for i in range(4):
             if self.DEBUG:
@@ -95,6 +99,16 @@ class gen_gcode(object):
             else:
                 self.gcode.append(self.pm.pmap[i][1])
 
+    def serialize_8bit(self, int_com):
+        #serialize a single byte of data into G-code 
+        for i in [4,0]:
+            self.serialize_4bit(int_com>>i & 0x0f)
+
+    def serialize_16bit(self, int_com):
+        #serialize 2 bytes of data into G-code 
+        for i in [8,0]:
+            self.serialize_8bit(int_com>>i & 0xff)
+
 
     def export(self, filename):
         for c in self.commands:
@@ -103,8 +117,10 @@ class gen_gcode(object):
             
             com_int = self.pm.com[c[0]]
             
-            self.split_4bit(com_int)
-            
+            #self.serialize_4bit(com_int)
+            #self.serialize_8bit(com_int)
+            self.serialize_16bit(com_int)
+
             if self.DEBUG:
                 print('TRIGGER up-', self.pm.trigger[0])    
                 print('TRIGGER dn-', self.pm.trigger[1])   
@@ -132,14 +148,12 @@ pc.map_pin(1,['M64 P1', 'M65 P1'])
 pc.map_pin(2,['M64 P2', 'M65 P2'])
 pc.map_pin(3,['M64 P3', 'M65 P3'])
 
-pc.add_command('linethick', 0xa )
-pc.add_command('headup'   , 0x1 )
-pc.add_command('headdown' , 0x2 )
+pc.add_command('linethick', 0xffaa )
+pc.add_command('headup'   , 0xaaff )
+pc.add_command('headdown' , 0xaaaa )
 
 #print(pc.pinmap)
 pc.show_commands()
-
-
 
  
 gc = gen_gcode(pinmap=pc)
