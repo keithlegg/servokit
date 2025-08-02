@@ -2,7 +2,7 @@
 
 
 
-PROJECT=pulse_differential
+PROJECT=DM860S_driver
 
 SOURCES=./src/examples/$(PROJECT).c
 

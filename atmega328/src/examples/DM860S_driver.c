@@ -125,23 +125,25 @@ int main (void)
     DDRB = 0xff;
 
     shutdown();
-
     enable_motor();
 
     while (1)
     {
         set_dir(0);         
-        gen_pulses(2000, 100);
+        gen_pulses(1000000, 20);
         _delay_ms(1000);
 
         disable_motor();
-        _delay_ms(1000);
-
+        _delay_ms(2000);
         enable_motor();
         
         set_dir(1);         
-        gen_pulses(2000, 100);
+        gen_pulses(1000000, 20);
         _delay_ms(1000);
+
+        disable_motor();
+        _delay_ms(2000);
+        enable_motor();
 
     }
 
