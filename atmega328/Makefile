@@ -2,7 +2,7 @@
 
 
 
-PROJECT=pwm_servo
+PROJECT=pulse_differential
 
 SOURCES=./src/examples/$(PROJECT).c
 
