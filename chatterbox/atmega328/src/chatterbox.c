@@ -58,12 +58,24 @@
 
 
 
+//semaphore used in interrupt 
 volatile uint8_t stale;
+volatile uint8_t BYTE_BUFFER;
 
 //send in reverse bit order - last pin triggers on falling edge
-uint8_t CNC_COMMAND = 0;
 
 
+uint8_t word_count  = 0;
+uint8_t byte_count  = 0;
+
+
+uint8_t CNC_COMMAND1 = 0;
+uint8_t CNC_COMMAND2 = 0;
+uint8_t CNC_COMMAND3 = 0;
+
+
+//height of Z (servo rotation) 
+uint16_t Z_HEIGHT = 0;
 
 
 /***********************************************/
@@ -182,10 +194,6 @@ void init_pins(void)
 {
 
     // setup pin change interrupts 
-    DDRD &= ~(1 << DDD2);    // Clear the PD2 pin
-    //DDRD &= ~(1 << DDD3);  // Clear the PD3 pin
-
-    DDRD |= 0xe;             // all but lower bit 
 
 
     // setup interrupts for reading two quadrature lines  
@@ -194,8 +202,6 @@ void init_pins(void)
     // Interrupt 1 Sense Control
     EICRA |= (1 << ISC11); // trigger on falling edge
     // External Interrupt Mask Register
-
-    //EIMSK |= (1 << INT0)|(1 << INT1);   // Turns on INT0 and INT1
     EIMSK |= (1 << INT0);                 // Turns on INT0 
 
     /*
@@ -206,6 +212,11 @@ void init_pins(void)
     TCCR0B |= (1 << CS01);                 // set prescaler to 8 and starts PWM
     */
 
+    DDRB  = 0xff;             
+    DDRD  = 0x00;//all inputs
+    //PORTD = 0xff;//pull ups  
+
+
     // only look at the freshest of data 
     //the interrupt will tell us when its ready 
     stale=1;
@@ -215,9 +226,57 @@ void init_pins(void)
 
 
 
+uint8_t reverse_bits(uint8_t v)
+{
+    uint8_t r = v & 1; // r will be reversed bits of v; first get LSB of v
+    //uint8_t s = sizeof(v) * CHAR_BIT - 1; // extra shift needed at end
+    uint8_t s = sizeof(v) * 7; // extra shift needed at end
+
+    for (v >>= 1; v; v >>= 1)
+    {   
+        r <<= 1;
+        r |= v & 1;
+        s--;
+    }
+    r <<= s; // shift when v's highest bits are zero
+    return r;
+}
+
+
 /***********************************************/
 /***********************************************/
 
+void runchatter(void)
+{
+    while(1)
+    {
+        //assemble 2 4bits into an 8bit byte  
+        if(stale==0)
+        {
+            
+             
+            if(word_count==0)
+            {
+                CNC_COMMAND1 =  reverse_bits(BYTE_BUFFER);
+                word_count++;
+                stale=1;
+            }else{
+                CNC_COMMAND1 |= reverse_bits(BYTE_BUFFER)>>4 ;
+                word_count=0;
+                stale=1;
+                
+                
+                send_txt_1byte(CNC_COMMAND1);
+                USART_Transmit( 0xa ); //CHAR_TERM = new line  
+                USART_Transmit( 0xd ); //0xd = carriage return
+                 
+            } 
+            //TODO set up a way to store every 3rd byte 
+            /* if(byte_count==2){}*/
+        }//data in rx buffer 
+
+    }//endless loop
+}
 
 
 
@@ -229,80 +288,21 @@ int main(){
     sei(); // turn on interrupts
     init_pins();
 
+    runchatter();
 
-    while(1)
-    {
-        if(stale==0)
-        {
-            send_txt_1byte(CNC_COMMAND);
-            
-            USART_Transmit( 0xa ); //CHAR_TERM = new line  
-            USART_Transmit( 0xd ); //0xd = carriage return
 
-            stale=1;
-        }
-
-    }
-
-    //while(1){rx_command();}
-
-}
+}//main 
  
 
 /***********************************************/
 /***********************************************/
-
-/*
-//serial port to read commands 
-ISR (USART_RX_vect)
-{
-    while(!(UCSR0A & (1 << RXC0))); // wait for data
-    
-    //STEP SIZE HERE MAKES A BIG DIFFERENCE 
-    // "1" in ascii 
-    if (UDR0==0x31){
-        if(newpos>2){
-            newpos = newpos-2;
-        }
-    }
-    
-    // "2" in ascii 
-    if (UDR0==0x32){
-        newpos = newpos+2;
-
-    }
-
-    USART_Transmit( 0xd ); //0xd = carriage return
-
-}
-*/
-
-
 // read the state of the 4 data lines on falling edge 
-// note they are flipped bit order so pin 2 can trigger last 
+//shifted 3 because the lower 3 pins are reserved
 ISR (INT0_vect)
 {
-    //cnc_d0 = (PIND & (1 << PIND5)) == (1 << PIND5);
-    
-    //grab the lower 4 bits 
-    //CNC_COMMAND = (PIND & 0x0f); 
-    
-    CNC_COMMAND = PIND>>3; 
-
-    //grab the upper 4 bits 
-    //CNC_COMMAND = (PIND & 0xf0) >> 4; 
-
+    BYTE_BUFFER = PIND>>3;  
     stale=0;
 }
-
-
-/* 
-ISR (INT1_vect){}}
-*/ 
-
-
-
-
 
 
 

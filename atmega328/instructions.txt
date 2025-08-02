@@ -1,4 +1,42 @@
-#mega328p
+TOOLS TO GET UP AND RUNNING WITH MOTOR CONTROLLERS
+
+
+
+
+--------------------------
+#EXTERNAL CONTROLLER EXAMPLES 
+
+pulse
+    simple enable and direction out 
+
+hbridge_pulse
+    simple bridge control with high and low side, and enable 
+
+
+--------------------------
+# PWM EXAMPLES 
+
+button_servo
+    ~20ms (adjustable) servo PWM and button input 
+
+fastpwm
+    AVR fastPWM example 
+
+
+--------------------------
+# ENCODER EXCAMPLES
+
+grays_code (not done)
+
+
+
+
+
+
+
+
+
+
 
 
 
