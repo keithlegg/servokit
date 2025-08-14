@@ -2,7 +2,7 @@
 
 
 
-PROJECT=DM860S_driver
+PROJECT=damn_squarewave
 
 SOURCES=./src/examples/$(PROJECT).c
 

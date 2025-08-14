@@ -9,12 +9,18 @@
 /*******************************/
 
 /*
-
+   
    Simple tool to make some blinkys for a reeeeal simple motor controller 
    just to hit the ground running and get moving 
+   
+
+   OUTPUTS:
+    
+       pulse, direction with direction changing in a loop 
 
 
-   Pinouts: 
+   HARDWARE PINOUT:
+    
        DDRB |= (1 << 5);  //PB5 arduino led
 
        sbi(DDRB, 3 );     //PB5 arduino pin 11

@@ -12,8 +12,8 @@
 
    This is the diferential version of the "pulse.c"
 
-   Simple tool to make some blinkys for a reeeeal simple motor controller 
-   just to hit the ground running and get moving 
+   
+   Simple driver for the "RATTMMOTOR" chinesium motor driver 
 
 
    Pinouts: 

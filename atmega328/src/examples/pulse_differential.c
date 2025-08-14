@@ -16,7 +16,14 @@
    just to hit the ground running and get moving 
 
 
-   Pinouts: 
+   OUTPUTS:
+    
+       differential pulse, direction, enable  
+       direction changes in a loop, enable ON/OFF between cycles 
+
+
+   HARDWARE PINOUT:
+
        DDRB |= (1 << 5);  //PB5 arduino led
 
        sbi(DDRB, 3 );     //PB5 arduino pin 11

@@ -14,7 +14,10 @@
    just to hit the ground running and get moving 
 
 
-   Pinouts: 
+   OUTPUTS:
+
+
+   HARDWARE PINOUT:
        DDRB |= (1 << 5);  //PB5 arduino led
 
        sbi(DDRB, 3 );     //PB5 arduino pin 11
