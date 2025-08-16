@@ -27,6 +27,25 @@
        DDRB =0b00001000;  //PB3 arduino pin 11 
        DDRB |= (1 << 3);  //PB3 arduino pin 11
 
+
+
+
+    NOTES ON DRIVERS:
+
+    GECKODRIVE 320X 
+        
+        #When using COMMON connected to GND:
+        The minimum specified STEP logic '1' time is 1 uS.
+        The minimum specified STEP logic '0' time is 2.5 uS.
+        Use narrow logic '1' step pulses.
+        The STEP input cannot be driven with an open-collector driver.
+        3.3V and 5V logic level drivers can be used.
+
+        #When using COMMON connected to +5VDC:
+        The minimum specified STEP logic '1' time is 2.5 uS.
+        The minimum specified STEP logic '0' time is 1 uS.
+        Use narrow logic '0' step pulses.
+
 */   
 
 
@@ -38,11 +57,20 @@
 #define sbi(a, b) (a) |= (1 << (b))
 #define cbi(a, b) (a) &= ~(1 << (b))
 
-
+/*
 #define MOTOR_ENABLE_PORT PORTB
 #define MOTOR_ENABLE_PIN 5
-
 #define MOTOR_DIR_PORT PORTB
+#define MOTOR_DIR_PIN 3
+*/
+
+
+#define MOTOR_ENABLE_DDR DDRD
+#define MOTOR_ENABLE_PORT PORTD
+#define MOTOR_ENABLE_PIN 2
+
+#define MOTOR_DIR_DDR DDRD
+#define MOTOR_DIR_PORT PORTD
 #define MOTOR_DIR_PIN 3
 
 
@@ -67,9 +95,11 @@ void gen_pulses(uint16_t num, uint16_t del)
     {
         sbi(MOTOR_ENABLE_PORT, MOTOR_ENABLE_PIN );
         if(usedelay) _delay_us(del);
+        //_delay_ms(1);
 
         cbi(MOTOR_ENABLE_PORT, MOTOR_ENABLE_PIN );
         if(usedelay) _delay_us(del); 
+        //_delay_ms(1);
     } 
   
 
@@ -92,10 +122,10 @@ int main (void)
     //DDRD |= (0x4);  
     
 
-    DDRB = 0xff;
+    MOTOR_ENABLE_DDR = 0xff;
+    MOTOR_DIR_DDR    = 0xff;
 
-
-
+     
     while (1)
     {
         // set_dir(0);         
@@ -103,14 +133,25 @@ int main (void)
         // set_dir(1);         
         // gen_pulses(3000, 100);
 
-
+        //go  
         set_dir(0);         
-        gen_pulses(10000, 50);
+        gen_pulses(10000, 1000);
+        
+        //let things settle, dude
+        _delay_ms(1000);
+
+        //go the other way 
         set_dir(1);         
-        gen_pulses(10000, 50);
+        gen_pulses(10000, 1000);
+
+        //let things settle, dude        
+        _delay_ms(1000);
 
 
     }
+    
+
+
 
 } 
 

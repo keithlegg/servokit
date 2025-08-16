@@ -2,7 +2,9 @@
 
 
 
-PROJECT=damn_squarewave
+PROJECT=pulse
+
+#PROJECT=damn_squarewave
 
 SOURCES=./src/examples/$(PROJECT).c
 

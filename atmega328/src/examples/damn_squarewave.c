@@ -10,7 +10,7 @@
 
 /*
    
-   Just a damn square wave. Doesnt get any simnpler than this. 
+   Just a damn square wave. Doesnt get any simpler than this. 
    
 
    OUTPUTS:
@@ -41,7 +41,7 @@
 #define MOTOR_PULSE_PIN 2
 
 
-//uint16_t delval = 1000; 
+const uint16_t delval = 40; 
 
 /*******************************/
 int main (void)
@@ -59,10 +59,10 @@ int main (void)
     while (1)
     {
         sbi(MOTOR_PULSE_PORT, MOTOR_PULSE_PIN );
-        _delay_ms(500);
+        _delay_ms(delval);
 
         cbi(MOTOR_PULSE_PORT, MOTOR_PULSE_PIN );
-        _delay_ms(500);
+        _delay_ms(delval);
     }
 
 } 
