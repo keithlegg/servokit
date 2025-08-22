@@ -1,5 +1,8 @@
 
-#define F_CPU 16000000L // Define software reference clock for delay duration
+
+
+// Define software reference clock for delay duration
+#define F_CPU 16000000L 
 #define __DELAY_BACKWARD_COMPATIBLE__
 
 #include <avr/io.h>
@@ -9,7 +12,8 @@
 /*******************************/
 
 /*
-   
+
+
    Simple tool to make some blinkys for a reeeeal simple motor controller 
    just to hit the ground running and get moving 
    
@@ -117,35 +121,28 @@ int main (void)
    
     //DDRB =0b00001000;  //arduino pin 11 
     //DDRB |= (1 << 3);  //arduino pin 11
-
     //DDRD = 0xff;        
     //DDRD |= (0x4);  
     
 
+    //obviously this may need some adjustment - this is for maximum chance of a success 
     MOTOR_ENABLE_DDR = 0xff;
     MOTOR_DIR_DDR    = 0xff;
 
      
     while (1)
     {
-        // set_dir(0);         
-        // gen_pulses(3000, 100);
-        // set_dir(1);         
-        // gen_pulses(3000, 100);
-
         //go  
         set_dir(0);         
-        gen_pulses(10000, 1000);
-        
+        gen_pulses(5000, 1000);
         //let things settle, dude
-        _delay_ms(1000);
+        _delay_ms(2000);
 
         //go the other way 
         set_dir(1);         
-        gen_pulses(10000, 1000);
-
+        gen_pulses(5000, 1000);
         //let things settle, dude        
-        _delay_ms(1000);
+        _delay_ms(2000);
 
 
     }
