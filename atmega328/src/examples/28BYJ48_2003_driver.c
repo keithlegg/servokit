@@ -41,13 +41,7 @@
 
 
 /*******************************/
-
-// void set_dir(uint8_t dir)
-
-
-/*******************************/
-
-void gen_pulses(uint16_t num, uint16_t del)
+void gen_pulses_cw(uint16_t num, uint16_t del)
 {
     uint8_t usedelay = 1;
 
@@ -55,22 +49,39 @@ void gen_pulses(uint16_t num, uint16_t del)
 
     for(uint16_t c=0;c<num;c++)
     {
-        
+                 
         for (p=0;p<5;p++)
         {
-        
             sbi(MOTOR_ENABLE_PORT, p );
             if(p>0){
                 cbi(MOTOR_ENABLE_PORT, p-1 );                  
             }
-          
-            
-            //if(usedelay) _delay_us(del);     
-            _delay_ms(500); 
+            if(usedelay) _delay_us(del);     
         }
 
     } 
 
+}
+
+
+/*******************************/
+void gen_pulses_ccw(uint16_t num, uint16_t del)
+{
+    uint8_t usedelay = 1;
+
+    int p = 0;
+
+    for(uint16_t c=0;c<num;c++)
+    {
+        for (p=4;p>=0;p--)
+        {
+            sbi(MOTOR_ENABLE_PORT, p );
+            
+            if(usedelay) _delay_us(del); 
+            cbi(MOTOR_ENABLE_PORT, p ); 
+
+        }
+    } 
 }
 
 
@@ -79,21 +90,15 @@ void gen_pulses(uint16_t num, uint16_t del)
 /*******************************/
 int main (void)
 {
-   
-    //DDRB =0b00001000;  //arduino pin 11 
-    //DDRB |= (1 << 3);  //arduino pin 11
-    //DDRD = 0xff;        
-    //DDRD |= (0x4);  
     
     MOTOR_ENABLE_DDR = 0x0f;
      
     while (1)
     {
-        gen_pulses(10,100);
+        gen_pulses_cw(1 ,900000);
+        gen_pulses_ccw(1,900000);
 
     }
-    
-
 
 
 } 
