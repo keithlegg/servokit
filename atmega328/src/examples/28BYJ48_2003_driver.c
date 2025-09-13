@@ -41,6 +41,75 @@
 
 
 /*******************************/
+void run_ccw(uint16_t num, uint16_t del)
+{
+    uint8_t usedelay = 1; 
+
+
+    MOTOR_ENABLE_PORT = 0b0001001;
+    if(usedelay) _delay_us(del); 
+
+    MOTOR_ENABLE_PORT = 0b0001100;
+    if(usedelay) _delay_us(del); 
+
+    MOTOR_ENABLE_PORT = 0b0000110;
+    if(usedelay) _delay_us(del); 
+
+    MOTOR_ENABLE_PORT = 0b0000011;
+    if(usedelay) _delay_us(del); 
+
+
+}
+
+
+/*******************************/
+void run_cw(uint16_t num, uint16_t del)
+{
+    uint8_t usedelay = 1; 
+
+
+
+    MOTOR_ENABLE_PORT = 0b0000011;
+    if(usedelay) _delay_us(del); 
+
+    MOTOR_ENABLE_PORT = 0b0000110;
+    if(usedelay) _delay_us(del); 
+
+    MOTOR_ENABLE_PORT = 0b0001100;
+    if(usedelay) _delay_us(del); 
+
+    MOTOR_ENABLE_PORT = 0b0001001;
+    if(usedelay) _delay_us(del); 
+
+
+}
+
+
+/*******************************/
+int main (void)
+{
+    
+    MOTOR_ENABLE_DDR = 0x0f;
+     
+    while (1)
+    {
+        run_cw(1, 1000000);
+
+    }
+
+
+} 
+
+/*******************************/
+
+
+
+/*******************************/
+/*
+
+//THESE ARE NOT RIGHT BUT MAYBE USEFUL 
+//BE AWARE OF THE ORDER OF THE WIRING  (1-2-3-4 VS 4-3-2-1)
+
 void gen_pulses_cw(uint16_t num, uint16_t del)
 {
     uint8_t usedelay = 1;
@@ -63,8 +132,6 @@ void gen_pulses_cw(uint16_t num, uint16_t del)
 
 }
 
-
-/*******************************/
 void gen_pulses_ccw(uint16_t num, uint16_t del)
 {
     uint8_t usedelay = 1;
@@ -83,27 +150,4 @@ void gen_pulses_ccw(uint16_t num, uint16_t del)
         }
     } 
 }
-
-
-
-
-/*******************************/
-int main (void)
-{
-    
-    MOTOR_ENABLE_DDR = 0x0f;
-     
-    while (1)
-    {
-        gen_pulses_cw(1 ,900000);
-        gen_pulses_ccw(1,900000);
-
-    }
-
-
-} 
-
-/*******************************/
-
-
-
+*/
