@@ -181,21 +181,27 @@ int main (void)
 {
 
     DDRC = 0xff;     
-    DDRD = 0xff;  
-    DDRL = 0xff; 
-    //DDRK SET DYNAMICALLY 
+    DDRL = 0xff;  
+    //DDRL = 0xff; 
 
-    PORTD |= 0x08; 
+    //PORTD |= 0x08; 
     //DDRD |= (0x4); // PORTD!
     
     //USART_Init(MYUBRR);
-  
+    //USART_Transmit(0x41); 
+
     uint16_t a = 0;
 
     while(1)
     {   
-        //USART_Transmit(0x41); 
-        _delay_ms(100);
+        PORTC = 0xff;   
+        PORTL = 0xff; 
+        _delay_ms(1000);
+
+        PORTC = 0x00;   
+        PORTL = 0x00;   
+        _delay_ms(1000);
+
     }
 
 
