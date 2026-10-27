@@ -2,7 +2,7 @@
 PROJECT=actuator
 
 
-SOURCES=src/actuator.c
+SOURCES=src/theta_stepper.c
 
 
 
