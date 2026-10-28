@@ -64,7 +64,7 @@
 
 
 
-const uint16_t delval = 20; 
+const uint16_t delval = 200; 
 
 
 /*******************************/
@@ -76,9 +76,6 @@ void setup_ports()
     MOTOR_PULSE_DDR = 0xfc;
 
     //MOTOR_ENCODER_IN_DDR &= ~(1 << MOTOR_ENCODER_IN_DDR); 
-
-
-
 }
 
 
@@ -86,8 +83,7 @@ void setup_ports()
 uint8_t read_encoder()
 {
     uint8_t out = 0;
-    
-    
+
     // !(PINA & (1 << BTN_BIT)
 
     if (MOTOR_ENCODER_IN_PORT & (1 << 1)) 
@@ -120,15 +116,15 @@ uint8_t test_encoder()
 void run_stepper_cw(uint16_t num_pulses)
 {
     // make sure to never turn both on at same time
-    cbi(MOTOR_PULSE_PORT, MOTOR_PULSE_PIN_CCW );
+    sbi(MOTOR_PULSE_PORT, MOTOR_PULSE_PIN_CCW );
 
     for(uint16_t x = 0;x<num_pulses;x++)
     {
         sbi(MOTOR_PULSE_PORT, MOTOR_PULSE_PIN_CW );
-        _delay_ms(delval);
+        _delay_us(delval);
 
         cbi(MOTOR_PULSE_PORT, MOTOR_PULSE_PIN_CW );
-        _delay_ms(delval);
+        _delay_us(delval);
     }
 }
 
@@ -136,15 +132,15 @@ void run_stepper_cw(uint16_t num_pulses)
 void run_stepper_ccw(uint16_t num_pulses)
 {
     // make sure to never turn both on at same time
-    cbi(MOTOR_PULSE_PORT, MOTOR_PULSE_PIN_CW );
+    sbi(MOTOR_PULSE_PORT, MOTOR_PULSE_PIN_CW );
 
     for(uint16_t x = 0;x<num_pulses;x++)
     {
         sbi(MOTOR_PULSE_PORT, MOTOR_PULSE_PIN_CCW );
-        _delay_ms(delval);
+        _delay_us(delval);
 
         cbi(MOTOR_PULSE_PORT, MOTOR_PULSE_PIN_CCW );
-        _delay_ms(delval);
+        _delay_us(delval);
     }
 }
 
@@ -153,23 +149,24 @@ void run_stepper_ccw(uint16_t num_pulses)
 int main (void)
 {
     setup_ports();
+    
+    uint8_t enc_val = 0;
+    
+    uint16_t num_pulses = 1000;
+    uint16_t long_pause = 300;    
 
-    while (1)
-    {    
-        test_encoder();
-    }
-
-    /*
     while (1)
     {
-        run_stepper_cw(100);
-        _delay_ms(2000);
+        //enc_val = read_encoder();
+
+        run_stepper_cw(num_pulses);
+        _delay_ms(long_pause);
         
-        run_stepper_ccw(100);
-        _delay_ms(2000);
+        run_stepper_ccw(num_pulses);
+        _delay_ms(long_pause);
 
     }
-    */
+    
 
 } 
 
