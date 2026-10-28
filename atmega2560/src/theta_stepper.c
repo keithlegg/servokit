@@ -68,7 +68,7 @@ const uint16_t delval = 200;
 
 
 /*******************************/
-void setup_ports()
+void setup_ports(void)
 {
     TEST_LED_DDR    = 0xff;
 
@@ -80,7 +80,7 @@ void setup_ports()
 
 
 /*******************************/
-uint8_t read_encoder()
+uint8_t read_encoder(void)
 {
     uint8_t out = 0;
 
@@ -99,7 +99,7 @@ uint8_t read_encoder()
 
 
 /*******************************/
-uint8_t test_encoder()
+uint8_t test_encoder(void)
 {
     uint8_t val = read_encoder();
 
@@ -113,13 +113,68 @@ uint8_t test_encoder()
 }
 
 /*******************************/
+void shutdown_stepper(void)
+{
+    cbi(MOTOR_PULSE_PORT, MOTOR_PULSE_PIN_CW );
+    cbi(MOTOR_PULSE_PORT, MOTOR_PULSE_PIN_CCW );    
+}
+
+
+/*******************************/
+void home_stepper_ccw(void)
+{
+    uint8_t enc_val = read_encoder();
+     
+    // make sure to never turn both on at same time
+    sbi(MOTOR_PULSE_PORT, MOTOR_PULSE_PIN_CW );
+
+    while(enc_val==1)
+    {
+        enc_val = read_encoder();
+
+        sbi(MOTOR_PULSE_PORT, MOTOR_PULSE_PIN_CCW );
+        _delay_us(delval);
+
+        cbi(MOTOR_PULSE_PORT, MOTOR_PULSE_PIN_CCW );
+        _delay_us(delval);
+    }
+
+}
+
+/*******************************/
+void home_stepper_cw(void)
+{
+    uint8_t enc_val = read_encoder();
+     
+    // make sure to never turn both on at same time
+    sbi(MOTOR_PULSE_PORT, MOTOR_PULSE_PIN_CCW );
+
+    while(enc_val==1)
+    {
+        enc_val = read_encoder();
+
+        sbi(MOTOR_PULSE_PORT, MOTOR_PULSE_PIN_CW );
+        _delay_us(delval);
+
+        cbi(MOTOR_PULSE_PORT, MOTOR_PULSE_PIN_CW );
+        _delay_us(delval);
+    }
+
+}
+
+
+/*******************************/
 void run_stepper_cw(uint16_t num_pulses)
 {
+    //uint8_t enc_val = 0;
+
     // make sure to never turn both on at same time
     sbi(MOTOR_PULSE_PORT, MOTOR_PULSE_PIN_CCW );
 
     for(uint16_t x = 0;x<num_pulses;x++)
     {
+        //enc_val = read_encoder();
+
         sbi(MOTOR_PULSE_PORT, MOTOR_PULSE_PIN_CW );
         _delay_us(delval);
 
@@ -152,21 +207,26 @@ int main (void)
     
     uint8_t enc_val = 0;
     
-    uint16_t num_pulses = 1000;
-    uint16_t long_pause = 300;    
+    uint16_t num_pulses = 100;
+    uint16_t long_pause = 1000;    
 
-    while (1)
+
+    while(1)
     {
-        //enc_val = read_encoder();
+        home_stepper_cw();
+        _delay_ms(long_pause);
+                 
+        run_stepper_ccw(num_pulses);
+        _delay_ms(long_pause);
+        
+
+        
+        home_stepper_ccw();
+        _delay_ms(long_pause);
 
         run_stepper_cw(num_pulses);
         _delay_ms(long_pause);
-        
-        run_stepper_ccw(num_pulses);
-        _delay_ms(long_pause);
-
-    }
-    
+    }  
 
 } 
 
